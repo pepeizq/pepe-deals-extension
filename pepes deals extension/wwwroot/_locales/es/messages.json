@@ -8,7 +8,7 @@
   "String5": { "message": "En oferta actualmente en {0}"},
   "String6": { "message": "Mejor oferta actual:"},
   "String7": { "message": "Código descuento: {0}" },
-  "String8": { "message": "Ha estado en el bundle de {0}: {1}"},
+  "String8": { "message": "Ha estado en 1 bundle"},
   "String9": { "message": "Ha estado en {0} bundles"},
   "String10": { "message": "Disponible en un bundle de {0}: {1}"},
   "String11": { "message": "Disponible en {0} bundles"},

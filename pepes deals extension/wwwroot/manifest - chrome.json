@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_name__",
   "description": "__MSG_description__",
-  "version": "0.11",
+  "version": "0.12",
   "author": "pepeizq",
   "homepage_url": "https://github.com/pepeizq/pepe-deals-extension",
   "icons": {
@@ -19,6 +19,12 @@
     "service_worker": "background-chrome.js",
     "type": "module"
   },
+  "host_permissions": [
+    "https://store.steampowered.com/*",
+    "https://www.gog.com/*",
+    "https://store.epicgames.com/*",
+    "https://pepe.deals/*"
+  ],
   "content_scripts": [
     {
       "js": [ "content/Blazor.BrowserExtension/ContentScript.js" ],
@@ -38,6 +44,7 @@
         "framework/*",
         "content/*",
         "app.js",
+        "idioma.js",
         "*.png",
         "*.webp",
         "*.ico",

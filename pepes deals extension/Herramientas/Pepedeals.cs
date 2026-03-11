@@ -20,7 +20,10 @@ namespace Herramientas
 		public List<JsonPrecio> Actuales { get; set; }
 
 		[JsonPropertyName("bundles")]
-		public List<JsonBundle> Bundles { get; set; }
+		public List<JsonBundle3> Bundles { get; set; }
+
+		[JsonPropertyName("bundlesPasados")]
+		public int BundlesPasados { get; set; }
 
 		[JsonPropertyName("gratis")]
 		public List<JsonGratis> Gratis { get; set; }
@@ -90,37 +93,13 @@ namespace Herramientas
 		public string CodigoTexto { get; set; }
 	}
 
-	public class JsonBundle
+	public class JsonBundle3
 	{
-		[JsonPropertyName("datos")]
-		public JsonBundle2 Datos { get; set; }
+		[JsonPropertyName("tienda")]
+		public int Tienda { get; set; }
 
-		[JsonPropertyName("nombreBundle")]
-		public string NombreBundle { get; set; }
-
-		[JsonPropertyName("tiendaBundle")]
-		public string TiendaBundle { get; set; }
-
-		[JsonPropertyName("iconoBundle")]
-		public string IconoBundle { get; set; }
-	}
-
-	public class JsonBundle2
-	{
-		[JsonPropertyName("tipo")]
-		public int Tipo { get; set; }
-
-		[JsonPropertyName("id")]
-		public int Id { get; set; }
-
-		[JsonPropertyName("drm")]
-		public int DRM { get; set; }
-
-		[JsonPropertyName("fechaEmpieza")]
-		public DateTime FechaEmpieza { get; set; }
-
-		[JsonPropertyName("fechaTermina")]
-		public DateTime FechaTermina { get; set; }
+		[JsonPropertyName("nombre")]
+		public int Nombre { get; set; }
 
 		[JsonPropertyName("enlace")]
 		public string Enlace { get; set; }

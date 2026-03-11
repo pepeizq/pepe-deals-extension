@@ -8,7 +8,7 @@
   "String5": { "message": "Attualmente in vendita su {0}"},
   "String6": { "message": "Il miglior affare attuale:"},
   "String7": { "message": "Codice sconto: {0}" },
-  "String8": { "message": "È stato in un pacchetto {0}: {1}" },
+  "String8": { "message": "È stato in un pacchetto" },
   "String9": { "message": "È stato in pacchetti {0}"},
   "String10": { "message": "Disponibile nel pacchetto {0}: {1}" },
   "String11": { "message": "Disponibile in fasci {0}"},

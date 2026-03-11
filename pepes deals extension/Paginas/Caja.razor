@@ -155,7 +155,7 @@
                     {
                         if (mejorActual.Datos.Precio == minimoHistorico.Datos.Precio && mejorActual.Datos.Tienda == minimoHistorico.Datos.Tienda)
                         {
-                            mensajeMinimo =  string.Format(WebExtensions.I18n.GetMessage("String5"), minimoHistorico.Tienda);
+                            mensajeMinimo = string.Format(WebExtensions.I18n.GetMessage("String5"), minimoHistorico.Tienda);
                         }
                     }
 
@@ -168,7 +168,28 @@
                     {
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <div style="background: color-mix(in srgb, var(--fondoSubsubcabecera) 25%, var(--fondoBotonPequeño)); padding: 5px 10px">
-                                @Herramientas.Precios.Euro(minimoHistorico.Datos.Precio)
+                                @if (idioma == "eu")
+                                {
+                                    if (minimoHistorico.Datos.PrecioCambiado > 0)
+                                    {
+                                        @Herramientas.Precios.Euro(minimoHistorico.Datos.PrecioCambiado)
+                                    }
+                                    else
+                                    {
+                                        @Herramientas.Precios.Euro(minimoHistorico.Datos.Precio)
+                                    }
+                                }
+                                else if (idioma == "us")
+                                {
+                                    if (minimoHistorico.Datos.PrecioCambiado > 0)
+                                    {
+                                        @Herramientas.Precios.Dolar(minimoHistorico.Datos.PrecioCambiado)
+                                    }
+                                    else
+                                    {
+                                        @Herramientas.Precios.Dolar(minimoHistorico.Datos.Precio)
+                                    }
+                                }
                             </div>
 
                             <div style="font-size: 14px;">
@@ -282,18 +303,35 @@
 
                                 <span style="flex: 1;"></span>
 
-                                <div style="padding: 10px 15px; background-color: var(--descuento);">
-                                    @mejorActual.Datos.Descuento%
-                                </div>
+                                @if (mejorActual.Datos.Descuento > 0)
+                                {
+                                    <div style="padding: 10px 15px; background-color: var(--descuento);">
+                                        @mejorActual.Datos.Descuento%
+                                    </div>
+                                }
 
                                 <div>
-                                    @if (mejorActual.Datos.PrecioCambiado > 0)
+                                    @if (idioma == "eu")
                                     {
-                                        @Herramientas.Precios.Euro(mejorActual.Datos.PrecioCambiado)
+                                        if (mejorActual.Datos.PrecioCambiado > 0)
+                                        {
+                                            @Herramientas.Precios.Euro(mejorActual.Datos.PrecioCambiado)
+                                        }
+                                        else
+                                        {
+                                            @Herramientas.Precios.Euro(mejorActual.Datos.Precio)
+                                        }
                                     }
-                                    else
+                                    else if (idioma == "us")
                                     {
-                                        @Herramientas.Precios.Euro(mejorActual.Datos.Precio)
+                                        if (mejorActual.Datos.PrecioCambiado > 0)
+                                        {
+                                            @Herramientas.Precios.Dolar(mejorActual.Datos.PrecioCambiado)
+                                        }
+                                        else
+                                        {
+                                            @Herramientas.Precios.Dolar(mejorActual.Datos.Precio)
+                                        }
                                     }
                                 </div>
                             </div>
@@ -318,6 +356,7 @@
 
     private string navegadorFicheros = string.Empty;
 
+    private string idioma = "eu";
     private string idExtension = string.Empty;
     private string enlace = string.Empty;
     private int idPepeizq = 0;
@@ -348,6 +387,14 @@
         idExtension = WebExtensions.I18n.GetMessage("@@extension_id");
         enlace = NavManager.Uri;
 
+        var modulo = await JavaScript.InvokeAsync<IJSObjectReference>("import", "./idioma.js");
+        var idiomaNavegador = await modulo.InvokeAsync<string>("obtenerIdioma");
+
+        if (idiomaNavegador == "en-US" || idiomaNavegador == "en-CA" || idiomaNavegador == "es-MX")
+        {
+            idioma = "us";
+        }
+
         if (string.IsNullOrEmpty(enlace) == false)
         {
             string html = string.Empty;
@@ -358,7 +405,7 @@
 
                 if (string.IsNullOrEmpty(idSteam) == false)
                 {
-                    string enlace = "https://pepe.deals/extension/steam2/" + idSteam + "/" + DatosPersonales.Clave + "/";
+                    string enlace = "https://pepe.deals/extension/steam3/" + idSteam + "/" + idioma + "/" + DatosPersonales.Clave + "/";
 
                     OyenteMensaje mensaje = new OyenteMensaje()
                     {
@@ -378,7 +425,7 @@
 
                 if (string.IsNullOrEmpty(slugGog) == false)
                 {
-                    string enlace = "https://pepe.deals/extension/gog2/" + slugGog + "/" + DatosPersonales.Clave + "/";
+                    string enlace = "https://pepe.deals/extension/gog3/" + slugGog + "/" + idioma + "/" + DatosPersonales.Clave + "/";
 
                     OyenteMensaje mensaje = new OyenteMensaje()
                     {
@@ -398,7 +445,7 @@
 
                 if (string.IsNullOrEmpty(slugEpic) == false)
                 {
-                    string enlace = "https://pepe.deals/extension/epic2/" + slugEpic + "/" + DatosPersonales.Clave + "/";
+                    string enlace = "https://pepe.deals/extension/epic3/" + slugEpic + "/" + idioma + "/" + DatosPersonales.Clave + "/";
 
                     OyenteMensaje mensaje = new OyenteMensaje()
                     {
@@ -469,56 +516,25 @@
 
                         if (datos.Bundles?.Count > 0)
                         {
-                            int bundlesDisponibles = 0;
-                            string nombreBundle = string.Empty;
-                            string tiendaBundle = string.Empty;
-                            string enlaceBundle = string.Empty;
-
-                            foreach (var bundle in datos.Bundles)
+                            if (datos.Bundles.Count == 1)
                             {
-                                if (string.IsNullOrEmpty(nombreBundle) == true && string.IsNullOrEmpty(tiendaBundle) == true &&
-                                    string.IsNullOrEmpty(enlaceBundle) == true)
-                                {
-                                    nombreBundle = bundle.NombreBundle;
-                                    tiendaBundle = bundle.TiendaBundle;
-                                    enlaceBundle = bundle.Datos.Enlace;
-                                }
-
-                                if (bundle.Datos.FechaEmpieza <= DateTime.Now && bundle.Datos.FechaTermina >= DateTime.Now)
-                                {
-                                    if (bundlesDisponibles == 0)
-                                    {
-                                        nombreBundle = bundle.NombreBundle;
-                                        tiendaBundle = bundle.TiendaBundle;
-                                        enlaceBundle = bundle.Datos.Enlace;
-                                    }
-
-                                    bundlesDisponibles += 1;
-                                }
+                                mensajeBundles = string.Format(WebExtensions.I18n.GetMessage("String10"), datos.Bundles[0].Tienda, datos.Bundles[0].Nombre);
                             }
-
-                            if (bundlesDisponibles == 0)
+                            else if (datos.Bundles.Count > 1)
                             {
-                                if (datos.Bundles.Count == 1)
-                                {
-                                    mensajeBundles = string.Format(WebExtensions.I18n.GetMessage("String8"), tiendaBundle, nombreBundle);
-                                }
-                                else if (datos.Bundles.Count > 1)
-                                {
-                                    mensajeBundles = string.Format(WebExtensions.I18n.GetMessage("String9"), datos.Bundles.Count);
-                                }
+                                mensajeBundles = string.Format(WebExtensions.I18n.GetMessage("String11"), datos.Bundles.Count);
                             }
-                            else
+                        }
+
+                        if (string.IsNullOrEmpty(mensajeBundles) == true && datos.BundlesPasados > 0)
+                        {
+                            if (datos.BundlesPasados == 1)
                             {
-                                if (bundlesDisponibles == 1)
-                                {
-                                    enlaceBundles = enlaceBundle;
-                                    mensajeBundles = string.Format(WebExtensions.I18n.GetMessage("String10"), tiendaBundle, nombreBundle);
-                                }
-                                else if (bundlesDisponibles > 1)
-                                {
-                                    mensajeBundles = string.Format(WebExtensions.I18n.GetMessage("String11"), bundlesDisponibles);
-                                }
+                                mensajeBundles = string.Format(WebExtensions.I18n.GetMessage("String8"), datos.BundlesPasados);
+                            }
+                            else if (datos.BundlesPasados > 1)
+                            {
+                                mensajeBundles = string.Format(WebExtensions.I18n.GetMessage("String9"), datos.BundlesPasados);
                             }
                         }
 
