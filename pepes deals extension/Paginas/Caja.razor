@@ -387,8 +387,17 @@
         idExtension = WebExtensions.I18n.GetMessage("@@extension_id");
         enlace = NavManager.Uri;
 
-        var modulo = await JavaScript.InvokeAsync<IJSObjectReference>("import", "./idioma.js");
-        var idiomaNavegador = await modulo.InvokeAsync<string>("obtenerIdioma");
+        string idiomaNavegador = "ue";
+
+        try
+        {
+            IJSObjectReference modulo = await JavaScript.InvokeAsync<IJSObjectReference>("import", "./idioma.js");
+            idiomaNavegador = await modulo.InvokeAsync<string>("obtenerIdioma");
+        }
+        catch
+        {
+            
+        }
 
         if (idiomaNavegador == "en-US" || idiomaNavegador == "en-CA" || idiomaNavegador == "es-MX")
         {
