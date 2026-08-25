@@ -1,0 +1,189 @@
+﻿@page "/options.html"
+@inherits BasePage
+
+@using Herramientas
+@using System.Text.Json
+@using WebExtensions.Net
+
+@inject IWebExtensionsApi Extensiones
+
+<style>
+    :root {
+        --fondoSubsubcabecera: #293751;
+        --fondoSubcabecera: #222b44;
+        --fondoBoton: #146a9c;
+        --fondoBotonPequeño: #0d1621;
+        --fondoBotonPequeñoHover: #060a0f;
+        --fondoMinimo: #002c47;
+        --colorTexto: #f5f5f5;
+        --colorTextoHover: #b9e2fa;
+        --colorEnlace: #95c0fe;
+        --colorEnlaceHover: #3486fd;
+        --descuento: #006400;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', Sans-serif;
+        background: linear-gradient(180deg, var(--fondoSubsubcabecera) 0%, var(--fondoSubcabecera) 211.07%);
+        min-height: 100vh;
+        color: var(--colorTexto);
+    }
+
+    .pepeizq-opciones-contenedor {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 25px 30px;
+        background: color-mix(in srgb, var(--fondoSubsubcabecera) 65%, var(--fondoBotonPequeño));
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.28), 0px 0px 2px 0px rgba(0, 0, 0, 0.24);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .pepeizq-opciones-titulo {
+        font-size: 20px;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        padding-bottom: 12px;
+    }
+
+    .pepeizq-opciones-seccion {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .pepeizq-opciones-etiqueta {
+        font-size: 14px;
+        color: var(--colorTextoHover);
+    }
+
+    .pepeizq-divisa-grupo {
+        display: flex;
+        gap: 10px;
+    }
+
+    .pepeizq-divisa-boton {
+        flex: 1;
+        text-align: center;
+        cursor: pointer;
+        background-color: var(--fondoBotonPequeño);
+        border: 2px solid var(--fondoBotonPequeño);
+        padding: 10px 15px;
+        color: var(--colorTexto);
+        transition: transform .2s, background-color .2s, border-color .2s;
+        border-radius: 5px;
+    }
+
+        .pepeizq-divisa-boton:hover {
+            transform: scale(1.02);
+            background-color: var(--fondoBotonPequeñoHover);
+        }
+
+        .pepeizq-divisa-boton.activo {
+            background-color: var(--fondoBoton);
+            border-color: var(--colorEnlaceHover);
+            color: var(--colorTextoHover);
+            font-weight: 600;
+        }
+
+    .pepeizq-checkbox-fila {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        background: color-mix(in srgb, var(--fondoSubsubcabecera) 25%, var(--fondoBotonPequeño));
+        padding: 10px 15px;
+        border-radius: 5px;
+        transition: background-color .2s;
+    }
+
+        .pepeizq-checkbox-fila:hover {
+            background-color: var(--fondoBotonPequeñoHover);
+        }
+
+    .pepeizq-checkbox-fila input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--fondoBoton);
+        cursor: pointer;
+    }
+
+    .pepeizq-guardado {
+        font-size: 13px;
+        color: var(--colorEnlace);
+        text-align: right;
+        min-height: 16px;
+    }
+</style>
+
+<div class="pepeizq-opciones-contenedor">
+    <div class="pepeizq-opciones-titulo">@WebExtensions.I18n.GetMessage("String20")</div>
+
+    <div class="pepeizq-opciones-seccion">
+        <div class="pepeizq-opciones-etiqueta">@WebExtensions.I18n.GetMessage("String21")</div>
+        <div class="pepeizq-divisa-grupo">
+            <div class="pepeizq-divisa-boton @(prefs.Divisa == "eu" ? "activo" : "")" @onclick='() => CambiarDivisa("eu")'>
+                € @WebExtensions.I18n.GetMessage("String22")
+            </div>
+            <div class="pepeizq-divisa-boton @(prefs.Divisa == "us" ? "activo" : "")" @onclick='() => CambiarDivisa("us")'>
+                $ @WebExtensions.I18n.GetMessage("String23")
+            </div>
+        </div>
+    </div>
+
+    <div class="pepeizq-opciones-seccion">
+        <div class="pepeizq-opciones-etiqueta">@WebExtensions.I18n.GetMessage("String24")</div>
+
+        <label class="pepeizq-checkbox-fila">
+            <input type="checkbox" checked="@prefs.MostrarTiendasNoOficiales" @onchange="e => CambiarBooleano(e, v => prefs.MostrarTiendasNoOficiales = v)" />
+            <span>@WebExtensions.I18n.GetMessage("String25")</span>
+        </label>
+
+        <label class="pepeizq-checkbox-fila">
+            <input type="checkbox" checked="@prefs.MostrarTiendasMarketplaces" @onchange="e => CambiarBooleano(e, v => prefs.MostrarTiendasMarketplaces = v)" />
+            <span>@WebExtensions.I18n.GetMessage("String26")</span>
+        </label>
+    </div>
+
+    <div class="pepeizq-guardado">@mensajeGuardado</div>
+</div>
+
+@code {
+    private PreferenciasUsuario prefs = new();
+    private string mensajeGuardado = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var resultado = await Extensiones.Storage.Local.Get("preferenciasUsuario");
+        if (resultado.TryGetProperty("preferenciasUsuario", out var valor))
+        {
+            prefs = valor.Deserialize<PreferenciasUsuario>() ?? new PreferenciasUsuario();
+        }
+    }
+
+    private async Task CambiarDivisa(string divisa)
+    {
+        prefs.Divisa = divisa;
+        await Guardar();
+    }
+
+    private async Task CambiarBooleano(ChangeEventArgs e, Action<bool> asignar)
+    {
+        asignar((bool)(e.Value ?? false));
+        await Guardar();
+    }
+
+    private async Task Guardar()
+    {
+        await Extensiones.Storage.Local.Set(new { preferenciasUsuario = prefs });
+
+        mensajeGuardado = WebExtensions.I18n.GetMessage("String27");
+        StateHasChanged();
+        await Task.Delay(1500);
+        mensajeGuardado = string.Empty;
+        StateHasChanged();
+    }
+}

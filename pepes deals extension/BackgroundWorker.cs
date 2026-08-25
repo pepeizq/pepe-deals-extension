@@ -1,6 +1,4 @@
 using Blazor.BrowserExtension;
-using System.Text.Json;
-using System.Threading.Tasks;
 using WebExtensions.Net.Runtime;
 
 namespace pepes_deals_extension
@@ -10,20 +8,20 @@ namespace pepes_deals_extension
         [BackgroundWorkerMain]
         public override async void Main()
         {
-            WebExtensions.Runtime.OnMessage.AddListener(Escuchando);
+			WebExtensions.Runtime.OnInstalled.AddListener(OnInstalled);
+			WebExtensions.Runtime.OnMessage.AddListener(Escuchando);
 		}
 
-        async Task OnInstalled()
-        {
-            var indexPageUrl = WebExtensions.Runtime.GetURL("index.html");
-
-            await WebExtensions.Tabs.Create(new()
-            {
-                Url = indexPageUrl
-            });
+		async Task OnInstalled(OnInstalledEventCallbackDetails detalles)
+		{
+			if (detalles.Reason == OnInstalledReason.Install)
+			{
+				var url = WebExtensions.Runtime.GetURL("welcome.html");
+				await WebExtensions.Tabs.Create(new() { Url = url });
+			}
 		}
 
-        public async Task<string> Escuchando()
+		public async Task<string> Escuchando()
         {
             var mensaje = WebExtensions.Runtime.OnMessage;
 
@@ -42,7 +40,7 @@ namespace pepes_deals_extension
 				}
 			}
 
-            return null;
+            return string.Empty;
 		}
     }
 }

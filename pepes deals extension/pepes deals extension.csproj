@@ -12,12 +12,14 @@
     <Content Remove="wwwroot\imagenes\iconos\epic.webp" />
     <Content Remove="wwwroot\imagenes\iconos\gog.webp" />
     <Content Remove="wwwroot\imagenes\iconos\steam.webp" />
+    <Content Remove="wwwroot\options.html" />
+    <Content Remove="wwwroot\welcome.html" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazor.BrowserExtension" Version="4.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.4" PrivateAssets="all" />
+    <PackageReference Include="Blazor.BrowserExtension" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.11" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

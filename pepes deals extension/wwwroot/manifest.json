@@ -2,9 +2,9 @@
   "manifest_version": 3,
   "name": "__MSG_name__",
   "description": "__MSG_description__",
-  "version": "0.13",
+  "version": "0.14",
   "author": "pepeizq",
-  "homepage_url": "https://github.com/pepeizq/pepe-deals-extension",
+  "homepage_url": "https://github.com/pepe-deals",
   "icons": {
     "16": "iconos/icono16.png",
     "32": "iconos/icono32.png",
@@ -16,8 +16,19 @@
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
   },
   "background": {
-    "scripts": [ "background-firefox.js" ],
+    "service_worker": "background-chrome.js",
     "type": "module"
+  },
+  "host_permissions": [
+    "https://store.steampowered.com/*",
+    "https://www.gog.com/*",
+    "https://store.epicgames.com/*",
+    "https://pepe.deals/*"
+  ],
+  "permissions": [ "storage" ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
   },
   "content_scripts": [
     {
@@ -32,17 +43,6 @@
       ]
     }
   ],
-  "host_permissions": [
-    "https://pepe.deals/*"
-  ],
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "admin@pepe.deals",
-      "data_collection_permissions": {
-        "required": [ "none" ]
-      }
-    }
-  },
   "web_accessible_resources": [
     {
       "resources": [

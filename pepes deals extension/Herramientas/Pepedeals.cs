@@ -13,11 +13,23 @@ namespace Herramientas
 		[JsonPropertyName("nombre")]
 		public string Nombre { get; set; }
 
-		[JsonPropertyName("minimosHistoricos")]
-		public List<JsonPrecio> Historicos { get; set; }
+		[JsonPropertyName("minimosHistoricosOficial")]
+		public List<JsonPrecio> HistoricosOficiales { get; set; }
 
-		[JsonPropertyName("preciosActuales")]
-		public List<JsonPrecio> Actuales { get; set; }
+		[JsonPropertyName("preciosActualesOficial")]
+		public List<JsonPrecio> ActualesOficiales { get; set; }
+
+		[JsonPropertyName("minimosHistoricosNoOficial")]
+		public List<JsonPrecio> HistoricosNoOficiales { get; set; }
+
+		[JsonPropertyName("preciosActualesNoOficial")]
+		public List<JsonPrecio> ActualesNoOficiales { get; set; }
+
+		[JsonPropertyName("minimosHistoricosMarketplaces")]
+		public List<JsonPrecio> HistoricosMarketplaces { get; set; }
+
+		[JsonPropertyName("preciosActualesMarketplaces")]
+		public List<JsonPrecio> ActualesMarketplaces { get; set; }
 
 		[JsonPropertyName("bundles")]
 		public List<JsonBundle3> Bundles { get; set; }
@@ -96,10 +108,10 @@ namespace Herramientas
 	public class JsonBundle3
 	{
 		[JsonPropertyName("tienda")]
-		public int Tienda { get; set; }
+		public string Tienda { get; set; }
 
 		[JsonPropertyName("nombre")]
-		public int Nombre { get; set; }
+		public string Nombre { get; set; }
 
 		[JsonPropertyName("enlace")]
 		public string Enlace { get; set; }
